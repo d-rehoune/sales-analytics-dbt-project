@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: localbike_database
+    schema: localbike_database
+    tables:
+      - name: brands
+      - name: categories
+      - name: customers
+      - name: order_items
+      - name: orders
+      - name: products
+      - name: stocks
+      - name: stores
+      - name: sttafs
