@@ -85,8 +85,6 @@ models:
           - not_null
           - accepted_values:
               values: [1, 2, 3, 4]
-              config:
-                quote: false
       
       - name: order_date
         description: Date the order was placed
@@ -198,7 +196,7 @@ models:
         tests:
           - not_null
 
-   - name: stg_localbike_database__staffs
+  - name: stg_localbike_database__staffs
     description: This model contains information about Local Bike employees
 
     columns:
@@ -241,8 +239,6 @@ models:
           - not_null
           - accepted_values:
               values: [0, 1]
-              config:
-                quote: false
   
   - name: stg_localbike_database__stocks
     description: This model contains inventory levels for each product at each store
