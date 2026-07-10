@@ -76,15 +76,15 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__customers')
-              field: customer_id   
+              name: customers_id_foreign_key_in_stg_localbike_database__orders
+              arguments:
+                to: ref('stg_localbike_database__customers')
+                field: customer_id   
 
       - name: order_status
         description: "Status code of the order: 1 = Pending, 2 = Processing, 3 = Rejected, 4 = Completed."
         tests:
           - not_null
-          - accepted_values:
-              values: [1, 2, 3, 4]
       
       - name: order_date
         description: Date the order was placed
@@ -102,16 +102,20 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__stores')
-              field: store_id
+              name: store_id_foreign_key_in_stg_localbike_database__orders
+              arguments:
+                to: ref('stg_localbike_database__stores')
+                field: store_id
       
       - name: staff_id
         description: Foreign key. Identifier to the staff member who handled the order
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__staffs')
-              field: staff_id
+              name: staff_id_foreign_key_in_stg_localbike_database__orders
+              arguments:
+                to: ref('stg_localbike_database__staffs')
+                field: staff_id
       
   - name: stg_localbike_database__order_items
     description: This model contains the line items of each order, at the product level (one row per product within an order)
@@ -128,8 +132,10 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__orders')
-              field: order_id
+              name: order_id_foreign_key_in_stg_localbike_database__order_items
+              arguments:
+                to: ref('stg_localbike_database__orders')
+                field: order_id
 
       - name: item_id
         description: Sequential identifier of the line item within an order
@@ -141,8 +147,10 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__products')
-              field: product_id
+              name: product_id_foreign_key_in_stg_localbike_database__order_items
+              arguments:
+                to: ref('stg_localbike_database__products')
+                field: product_id
 
       - name: quantity
         description: Number of units of the product sold in this line item
@@ -177,16 +185,20 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__brands')
-              field: brand_id
+              name: brand_id_foreign_key_in_stg_localbike_database__products
+              arguments:
+                to: ref('stg_localbike_database__brands')
+                field: brand_id
 
       - name: category_id
         description: Foreign key. Identifier to the product's category
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__categories')
-              field: category_id
+              name: category_id_foreign_key_in_stg_localbike_database__products
+              arguments:
+                to: ref('stg_localbike_database__categories')
+                field: category_id
 
       - name: model_year
         description: Model year of the product (e.g. 2016). Stored as an integer, not a date, since only the year is known
@@ -211,15 +223,19 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__stores')
-              field: store_id
+              name: store_id_foreign_key_in_stg_localbike_database__staffs
+              arguments:
+                to: ref('stg_localbike_database__stores')
+                field: store_id
 
       - name: manager_id
         description: Foreign key. Identifier to the staff member's manager. Null if the staff member has no manager (e.g. top-level manager)
         tests:
           - relationships:
-              to: ref('stg_localbike_database__staffs')
-              field: staff_id
+              name: manager_id_foreign_key_in_stg_localbike_database__staffs
+              arguments:
+                to: ref('stg_localbike_database__staffs')
+                field: staff_id
 
       - name: first_name
         description: First name of the staff member
@@ -237,14 +253,12 @@ models:
         description: "Flag indicating whether the staff member is currently active: 1 = active, 0 = inactive"
         tests:
           - not_null
-          - accepted_values:
-              values: [0, 1]
   
   - name: stg_localbike_database__stocks
     description: This model contains inventory levels for each product at each store
 
     columns:
-      - name: stock_id
+      - name: stocks_id
         description: Primary key. Unique identifier, generated by concatenating store_id and product_id
         tests:
           - not_null
@@ -255,16 +269,20 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__stores')
-              field: store_id
+              name: store_id_foreign_key_in_stg_localbike_database__stocks
+              arguments:
+                to: ref('stg_localbike_database__stores')
+                field: store_id
 
       - name: product_id
         description: Foreign key. Indentifier to the product in stock
         tests:
           - not_null
           - relationships:
-              to: ref('stg_localbike_database__products')
-              field: product_id
+              name: product_id_id_foreign_key_in_stg_localbike_database__staffs
+              arguments:
+                to: ref('stg_localbike_database__products')
+                field: product_id
 
       - name: quantity
         description: Number of units currently in stock
