@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: int_localbike_database__order_items_revenue
+    description: "Order line items enriched with order-level attributes (customer, store, staff, date, status) 
+    and revenue calculations (gross revenue, net revenue, discount amount). Grain: one row per order item.
+    Includes all order statuses (no filtering applied at this layer)"
+
+    columns:
+      - name: order_item_id
+        description: Primary key. Surrogate key from order_id and item_id.
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        description: Foreign key. Identifier to the order.
+        tests:
+          - not_null
+
+      - name: product_id
+        description: Foreign key. Identifier to the product.
+        tests:
+          - not_null
+
+      - name: customer_id
+        description: Foreign key. Identifier to the customer who placed the order.
+
+      - name: store_id
+        description: Foreign key. Identifier to the store that processed the order.
+
+      - name: staff_id
+        description: Foreign key. Identifier to the staff member who handled the order.
+
+      - name: order_date
+        description: Date the order was placed.
+
+      - name: order_status
+        description: "Status code of the order: 1 = Pending, 2 = Processing, 3 = Rejected, 4 = Completed."
+
+      - name: gross_revenue
+        description: Revenue before discount (quantity * list_price).
+        tests:
+          - not_null
+
+      - name: net_revenue
+        description: Revenue after discount (quantity * list_price * (1 - discount)).
+        tests:
+          - not_null
+
+      - name: discount_amount
+        description: Value of the discount applied (quantity * list_price * discount).
