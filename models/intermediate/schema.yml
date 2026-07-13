@@ -50,3 +50,44 @@ models:
 
       - name: discount_amount
         description: Value of the discount applied (quantity * list_price * discount).
+    
+  - name: int_localbike_database__products_enriched
+    description: "Products enriched with their brand and category names. Grain: one row per product.
+      Combines stg_products, stg_categories, and stg_brands into a single denormalized view,
+      reused across marts that need product-level detail."
+
+    columns:
+      - name: product_id
+        description: Primary key. Unique identifier for the product.
+        tests:
+          - not_null
+          - unique
+
+      - name: product_name
+        description: Name of the product.
+        tests:
+          - not_null
+
+      - name: model_year
+        description: Model year of the product (e.g. 2016). Stored as an integer since only the year is known.
+
+      - name: list_price
+        description: Standard list price of the product, before any discount.
+        tests:
+          - not_null
+
+      - name: brand_id
+        description: Foreign key. Identifier to the product's brand.
+        tests:
+          - not_null
+
+      - name: brand_name
+        description: Name of the product's brand.
+
+      - name: category_id
+        description: Foreign key. Identifier to the product's category.
+        tests:
+          - not_null
+
+      - name: category_name
+        description: Name of the product's category.
