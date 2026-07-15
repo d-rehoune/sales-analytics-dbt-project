@@ -40,4 +40,4 @@ models:
 
     marts:
       +materialized: table
-      +schema: mart
+      +schema: marts_localbike
