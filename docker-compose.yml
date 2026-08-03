@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  airflow-init:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    entrypoint: /bin/bash
+    command: -c "airflow db migrate"
+  airflow-webserver:
+    build: .
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./dbt:/opt/airflow/dbt
+      - ./secrets/bigqueryKey.json:/opt/airflow/dbt/.dbt_profiles/bigqueryKey.json:ro
+    ports:
+      - "8080:8080"
+    command: api-server 
+
+  airflow-scheduler:
+    build: .
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./dbt:/opt/airflow/dbt
+      - ./secrets/bigqueryKey.json:/opt/airflow/dbt/.dbt_profiles/bigqueryKey.json:ro
+    command: scheduler
+
+volumes:
+  postgres_data:
