@@ -77,9 +77,8 @@ models:
           - not_null
           - relationships:
               name: customers_id_foreign_key_in_stg_localbike_database__orders
-              arguments:
-                to: ref('stg_localbike_database__customers')
-                field: customer_id   
+              to: ref('stg_localbike_database__customers')
+              field: customer_id   
 
       - name: order_status
         description: "Status code of the order: 1 = Pending, 2 = Processing, 3 = Rejected, 4 = Completed."
@@ -103,9 +102,8 @@ models:
           - not_null
           - relationships:
               name: store_id_foreign_key_in_stg_localbike_database__orders
-              arguments:
-                to: ref('stg_localbike_database__stores')
-                field: store_id
+              to: ref('stg_localbike_database__stores')
+              field: store_id
       
       - name: staff_id
         description: Foreign key. Identifier to the staff member who handled the order
@@ -113,9 +111,8 @@ models:
           - not_null
           - relationships:
               name: staff_id_foreign_key_in_stg_localbike_database__orders
-              arguments:
-                to: ref('stg_localbike_database__staffs')
-                field: staff_id
+              to: ref('stg_localbike_database__staffs')
+              field: staff_id
       
   - name: stg_localbike_database__order_items
     description: This model contains the line items of each order, at the product level (one row per product within an order)
@@ -133,9 +130,8 @@ models:
           - not_null
           - relationships:
               name: order_id_foreign_key_in_stg_localbike_database__order_items
-              arguments:
-                to: ref('stg_localbike_database__orders')
-                field: order_id
+              to: ref('stg_localbike_database__orders')
+              field: order_id
 
       - name: item_id
         description: Sequential identifier of the line item within an order
@@ -148,9 +144,8 @@ models:
           - not_null
           - relationships:
               name: product_id_foreign_key_in_stg_localbike_database__order_items
-              arguments:
-                to: ref('stg_localbike_database__products')
-                field: product_id
+              to: ref('stg_localbike_database__products')
+              field: product_id
 
       - name: quantity
         description: Number of units of the product sold in this line item
@@ -186,9 +181,8 @@ models:
           - not_null
           - relationships:
               name: brand_id_foreign_key_in_stg_localbike_database__products
-              arguments:
-                to: ref('stg_localbike_database__brands')
-                field: brand_id
+              to: ref('stg_localbike_database__brands')
+              field: brand_id
 
       - name: category_id
         description: Foreign key. Identifier to the product's category
@@ -196,9 +190,8 @@ models:
           - not_null
           - relationships:
               name: category_id_foreign_key_in_stg_localbike_database__products
-              arguments:
-                to: ref('stg_localbike_database__categories')
-                field: category_id
+              to: ref('stg_localbike_database__categories')
+              field: category_id
 
       - name: model_year
         description: Model year of the product (e.g. 2016). Stored as an integer, not a date, since only the year is known
@@ -224,18 +217,16 @@ models:
           - not_null
           - relationships:
               name: store_id_foreign_key_in_stg_localbike_database__staffs
-              arguments:
-                to: ref('stg_localbike_database__stores')
-                field: store_id
+              to: ref('stg_localbike_database__stores')
+              field: store_id
 
       - name: manager_id
         description: Foreign key. Identifier to the staff member's manager. Null if the staff member has no manager (e.g. top-level manager)
         tests:
           - relationships:
               name: manager_id_foreign_key_in_stg_localbike_database__staffs
-              arguments:
-                to: ref('stg_localbike_database__staffs')
-                field: staff_id
+              to: ref('stg_localbike_database__staffs')
+              field: staff_id
 
       - name: first_name
         description: First name of the staff member
@@ -270,9 +261,8 @@ models:
           - not_null
           - relationships:
               name: store_id_foreign_key_in_stg_localbike_database__stocks
-              arguments:
-                to: ref('stg_localbike_database__stores')
-                field: store_id
+              to: ref('stg_localbike_database__stores')
+              field: store_id
 
       - name: product_id
         description: Foreign key. Indentifier to the product in stock
@@ -280,9 +270,8 @@ models:
           - not_null
           - relationships:
               name: product_id_id_foreign_key_in_stg_localbike_database__staffs
-              arguments:
-                to: ref('stg_localbike_database__products')
-                field: product_id
+              to: ref('stg_localbike_database__products')
+              field: product_id
 
       - name: quantity
         description: Number of units currently in stock
