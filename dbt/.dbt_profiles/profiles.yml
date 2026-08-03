@@ -1,0 +1,11 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: databird-498212
+      dataset: raw_localbike
+      keyfile: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
+      threads: 4
+      location: US
