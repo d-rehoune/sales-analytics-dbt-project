@@ -9,3 +9,7 @@ secrets/
 
 dbt/.dbt_profiles/bigqueryKey.json
 dbt/.dbt_profiles/.user.yml
+
+__pycache__/
+*.pyc
+mdp-airflow.txt
