@@ -1,53 +1,95 @@
+x-airflow-common: &airflow-common
+  build: .
+
+  environment:
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-webserver:8080/execution/
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
+    GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
+
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./dbt:/opt/airflow/dbt
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./secrets/bigqueryKey.json:/opt/airflow/dbt/.dbt_profiles/bigqueryKey.json:ro
+
 services:
+
   postgres:
     image: postgres:15
+
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    restart: unless-stopped
+
+
   airflow-init:
-    build: .
+    <<: *airflow-common
+
+    restart: "no"
+
     depends_on:
       - postgres
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    entrypoint: /bin/bash
-    command: -c "airflow db migrate"
+
+    command:
+      - bash
+      - -c
+      - |
+        airflow db migrate
+
+
   airflow-webserver:
-    build: .
+    <<: *airflow-common
+
     depends_on:
-      - postgres
-      - airflow-init
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./dbt:/opt/airflow/dbt
-      - ./secrets/bigqueryKey.json:/opt/airflow/dbt/.dbt_profiles/bigqueryKey.json:ro
+      airflow-init:
+        condition: service_completed_successfully
+
+    command:
+      - api-server
+
     ports:
       - "8080:8080"
-    command: api-server 
+
+    restart: unless-stopped
+
 
   airflow-scheduler:
-    build: .
+    <<: *airflow-common
+
     depends_on:
-      - postgres
-      - airflow-init
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/dbt/.dbt_profiles/bigqueryKey.json
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./dbt:/opt/airflow/dbt
-      - ./secrets/bigqueryKey.json:/opt/airflow/dbt/.dbt_profiles/bigqueryKey.json:ro
-    command: scheduler
+      airflow-init:
+        condition: service_completed_successfully
+
+    command:
+      - scheduler
+
+    restart: unless-stopped
+
+
+  airflow-dag-processor:
+    <<: *airflow-common
+
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+    command:
+      - dag-processor
+
+    restart: unless-stopped
+
 
 volumes:
+
   postgres_data:
